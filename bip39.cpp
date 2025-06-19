@@ -1,20 +1,49 @@
 #include <openssl/sha.h>
+#include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <cmath>
 #include <sstream>
 #include <vector>
 #include <bitset>
 
 #define FILE_NAME "wordlist.txt"
 
-std::vector<unsigned char> sha256_raw(const std::vector<unsigned char>& data) {
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(data.data(), data.size(), hash);
+std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase = "") {
+	std::string salt = "mnemonic" + passphrase;
+	std::vector<unsigned char> seed(64); // 512 bits = 64 bytes
 
-    return std::vector<unsigned char>(hash, hash + SHA256_DIGEST_LENGTH);
+	int val = PKCS5_PBKDF2_HMAC(
+		mnemonic.c_str(), mnemonic.length(),
+		reinterpret_cast<const unsigned char*>(salt.c_str()), salt.length(),
+		2048,
+		EVP_sha512(),
+		64,
+		seed.data()
+	);
+	if(val == 0){
+		std::cout << "Error generating seed.\n";
+		exit(0);
+	}
+
+	return seed;
+}
+// Converts a hex string to a vector of unsigned char (bytes)
+std::vector<unsigned char> hexStringToBytes(const std::string& hex) {
+	std::vector<unsigned char> bytes;
+	for (size_t i = 0; i < hex.length(); i += 2) {
+		std::string byteString = hex.substr(i, 2);
+		unsigned char byte = (unsigned char) strtol(byteString.c_str(), nullptr, 16);
+		bytes.push_back(byte);
+	}
+	return bytes;
+}
+std::vector<unsigned char> sha256_raw(const std::vector<unsigned char>& data) {
+	unsigned char hash[SHA256_DIGEST_LENGTH];
+	SHA256(data.data(), data.size(), hash);
+
+	return std::vector<unsigned char>(hash, hash + SHA256_DIGEST_LENGTH);
 }
 
 std::string getLine(int n){
@@ -58,7 +87,7 @@ void validateENT(int& ENT){
 }
 
 int main(){
-	std::string words;
+	std::string mnemonic;
 
 	int ENT;
 	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
@@ -83,11 +112,17 @@ int main(){
 
 	for(int i = 0; i < entropyWithCheckSum.length(); i += 11){
 		int row = toInt(entropyWithCheckSum.substr(i, 11));
-		words += getLine(row);
-		if(i != entropyWithCheckSum.length()-1){
-			words += ' ';
-		}
+		mnemonic += getLine(row);
+		mnemonic += ' ';
 	}
+	mnemonic.pop_back(); // Remove trailing space character
 
-	std::cout << words << '\n';
+	std::cout << "Mnemonic = " << mnemonic << '\n';
+
+	std::vector<unsigned char> seed = generateSeed(mnemonic);
+
+	std::cout << "Seed = ";
+	for(auto byte : seed)
+		printf("%02x", byte);
+	std::cout << '\n';
 }
