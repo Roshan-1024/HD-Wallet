@@ -1,16 +1,17 @@
+#include "bip39.h"
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <iostream>
-#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <bitset>
+#include <cstdlib>
 
-#define FILE_NAME "wordlist.txt"
+#define FILE_NAME "wordlists/english.txt"
 
-std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase = "") {
+std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase){
 	std::string salt = "mnemonic" + passphrase;
 	std::vector<unsigned char> seed(64); // 512 bits = 64 bytes
 
@@ -100,7 +101,7 @@ std::string generateMnemonic(int& ENT, std::vector<unsigned char>& entropy, std:
 	std::string entropyWithCheckSum = entropyBits + checkSum;
 
 	std::string mnemonic;
-	for(int i = 0; i < entropyWithCheckSum.length(); i += 11){
+	for(size_t i = 0; i < entropyWithCheckSum.length(); i += 11){
 		int row = toInt(entropyWithCheckSum.substr(i, 11));
 		mnemonic += getLine(row);
 		mnemonic += ' ';
@@ -108,23 +109,4 @@ std::string generateMnemonic(int& ENT, std::vector<unsigned char>& entropy, std:
 	mnemonic.pop_back(); // Remove trailing space character
 
 	return mnemonic;
-}
-
-int main(){
-	int ENT;
-	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
-	std::cin >> ENT;
-	validateENT(ENT);
-
-	std::vector<unsigned char> entropy = generateEntropy(ENT);
-	std::vector<unsigned char> hash = sha256_raw(entropy);
-	std::string mnemonic = generateMnemonic(ENT, entropy, hash);
-	std::vector<unsigned char> seed = generateSeed(mnemonic);
-
-	std::cout << "Mnemonic = " << mnemonic << '\n';
-
-	std::cout << "Seed = ";
-	for(auto byte : seed)
-		printf("%02x", byte);
-	std::cout << '\n';
 }
