@@ -1,6 +1,6 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -I./bip39 -I./bip32
+CXXFLAGS = -std=c++17 -Wall -I./bip39 -I./bip32 -I./config
 
 # Output binary
 TARGET = wallet

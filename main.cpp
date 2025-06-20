@@ -34,7 +34,6 @@ int main(){
 
 	std::cout << "master private key = ";
 	printHex(master_private_key);
-	std::cout << "master chain code = ";
+	std::cout << "master chain code =  ";
 	printHex(master_chain_code);
-
 }
