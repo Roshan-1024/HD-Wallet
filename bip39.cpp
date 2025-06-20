@@ -86,22 +86,11 @@ void validateENT(int& ENT){
 	}
 }
 
-int main(){
-	std::string mnemonic;
-
-	int ENT;
-	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
-	std::cin >> ENT;
-	validateENT(ENT);
-
-	std::vector<unsigned char> entropy = generateEntropy(ENT);
-	std::vector<unsigned char> hash = sha256_raw(entropy);
-
+std::string generateMnemonic(int& ENT, std::vector<unsigned char>& entropy, std::vector<unsigned char>& hash){
 	int CS = ENT/32;
 	std::string hashBits;
-	for(auto byte : hash){
+	for(auto byte : hash)
 		hashBits += std::bitset<8>(byte).to_string();
-	}
 	std::string checkSum = hashBits.substr(0, CS);
 
 	std::string entropyBits;
@@ -110,6 +99,7 @@ int main(){
 
 	std::string entropyWithCheckSum = entropyBits + checkSum;
 
+	std::string mnemonic;
 	for(int i = 0; i < entropyWithCheckSum.length(); i += 11){
 		int row = toInt(entropyWithCheckSum.substr(i, 11));
 		mnemonic += getLine(row);
@@ -117,9 +107,21 @@ int main(){
 	}
 	mnemonic.pop_back(); // Remove trailing space character
 
-	std::cout << "Mnemonic = " << mnemonic << '\n';
+	return mnemonic;
+}
 
+int main(){
+	int ENT;
+	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
+	std::cin >> ENT;
+	validateENT(ENT);
+
+	std::vector<unsigned char> entropy = generateEntropy(ENT);
+	std::vector<unsigned char> hash = sha256_raw(entropy);
+	std::string mnemonic = generateMnemonic(ENT, entropy, hash);
 	std::vector<unsigned char> seed = generateSeed(mnemonic);
+
+	std::cout << "Mnemonic = " << mnemonic << '\n';
 
 	std::cout << "Seed = ";
 	for(auto byte : seed)
