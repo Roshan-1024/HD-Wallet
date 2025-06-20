@@ -1,8 +1,12 @@
 #include "bip39/bip39.h"
+#include "bip32/bip32.h"
 #include <iostream>
 #include <cstdio>
 
 int main(){
+	///////////////////////////////////////////////////////////////////////
+	//				BIP-39
+	///////////////////////////////////////////////////////////////////////
 	int ENT;
 	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
 	std::cin >> ENT;
@@ -19,5 +23,18 @@ int main(){
 	for(auto byte : seed)
 		printf("%02x", byte);
 	std::cout << '\n';
-}
 
+	///////////////////////////////////////////////////////////////////////
+	//				BIP-32
+	///////////////////////////////////////////////////////////////////////
+	std::vector<unsigned char> seed_key = {'B','i','t','c','o','i','n',' ','s','e','e','d'};
+	std::vector<unsigned char> I = hmac_sha512(seed_key, seed);
+	std::vector<unsigned char> master_private_key(I.begin(), I.begin()+32);
+	std::vector<unsigned char> master_chain_code(I.begin()+32, I.end());
+
+	std::cout << "master private key = ";
+	printHex(master_private_key);
+	std::cout << "master chain code = ";
+	printHex(master_chain_code);
+
+}

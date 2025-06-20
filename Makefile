@@ -1,12 +1,12 @@
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -I./bip39
+CXXFLAGS = -std=c++17 -Wall -I./bip39 -I./bip32
 
 # Output binary
 TARGET = wallet
 
 # Source files
-SRC = main.cpp bip39/bip39.cpp
+SRC = main.cpp bip39/bip39.cpp bip32/bip32.cpp
 
 # OpenSSL flags
 LDLIBS = -lssl -lcrypto
@@ -20,4 +20,3 @@ $(TARGET): $(SRC)
 # Clean build artifacts
 clean:
 	rm -f $(TARGET)
-
