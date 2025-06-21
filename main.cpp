@@ -11,7 +11,6 @@ int main(){
 	//				BIP-39
 	///////////////////////////////////////////////////////////////////////
 	int ENT = getEntropySizeFromUserChoice();
-	validateENT(ENT); // Redundant (currently)
 
 	std::vector<unsigned char> entropy = generateEntropy(ENT);
 	std::vector<unsigned char> hash = sha256_raw(entropy);
