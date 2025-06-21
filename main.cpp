@@ -1,10 +1,9 @@
-#include "config/coin_config.h"
+#include "utils/utils.h"
 #include "bip39/bip39.h"
 #include "bip32/bip32.h"
 #include <iostream>
 #include <cstdio>
 #include <cstdint>
-#include <unordered_map>
 
 int main(){
 	///////////////////////////////////////////////////////////////////////

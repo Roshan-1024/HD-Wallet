@@ -1,7 +1,5 @@
 #include "bip32.h"
 #include <openssl/hmac.h>
-#include <iostream>
-#include <iomanip>
 #include <cstdint>
 #include <regex>
 
@@ -20,15 +18,11 @@ std::vector<unsigned char> hmac_sha512(const std::vector<unsigned char>& key,
 	return hmac_result;
 }
 
-void printHex(const std::vector<unsigned char>& data) {
-    for (unsigned char c : data)
-        std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)c;
-    std::cout << std::dec << std::endl;
-}
-
-std::vector<uint32_t> parsePath(std::string path){
+std::vector<uint32_t> parsePath(const std::string path){
 	std::vector<uint32_t> parsedPath;
 
+	// Match both hardened (e.g., /44') and non-hardened (e.g., /0) path components
+	// Group 1: index number, Group 2: optional apostrophe indicating hardened
 	std::regex re(R"(/([0-9]+)(')?)");
 	std::sregex_iterator it(path.begin(), path.end(), re);
 	std::sregex_iterator end;

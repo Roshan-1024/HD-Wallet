@@ -8,39 +8,8 @@
 #include <vector>
 #include <bitset>
 #include <cstdlib>
-#include <unordered_map>
 
 #define FILE_NAME "wordlists/english.txt"
-
-int getEntropySizeFromUserChoice(){
-	std::unordered_map<int, int> MS_Map = {
-		{1, 12},
-		{2, 15},
-		{3, 18},
-		{4, 21},
-		{5, 24},
-	};
-
-	int choice;
-	std::cout << "Choose the number of words for your Mnemonics:\n";
-	std::cout << "1. 12 Words\n";
-	std::cout << "2. 15 Words\n";
-	std::cout << "3. 18 Words\n";
-	std::cout << "4. 21 Words\n";
-	std::cout << "5. 24 Words\n";
-	std::cout << "Choice: ";
-	std::cin >> choice;
-
-	while (MS_Map.count(choice) != 1) {
-		std::cout << "Invalid choice. Try again: ";
-		std::cin >> choice;
-	}
-
-	int MS = MS_Map[choice];
-	int ENT = (32 * MS) / 3; // ENT in bits
-	validateENT(ENT); // Redundant (currently)
-	return ENT;
-}
 
 std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase){
 	std::string salt = "mnemonic" + passphrase;
@@ -56,7 +25,7 @@ std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::
 	);
 	if(val == 0){
 		std::cout << "Error generating seed.\n";
-		exit(0);
+		exit(1);
 	}
 
 	return seed;
@@ -81,8 +50,8 @@ std::vector<unsigned char> sha256_raw(const std::vector<unsigned char>& data) {
 std::string getLine(int n){
 	std::ifstream file(FILE_NAME);
 	if(!file){
-		std::cout << "File could not be opened.\n";
-		exit(0);
+		std::cerr << "Error: Failed to open wordlist file '" << FILE_NAME << "'.\n";
+		exit(1);
 	}
 
 	std::string word;
@@ -106,16 +75,9 @@ std::vector<unsigned char> generateEntropy(int ENT){
 	std::vector<unsigned char> entropy(byte_len);
 	if (!RAND_bytes(entropy.data(), byte_len)) {
 		std::cerr << "Error generating secure random bytes.\n";
-		exit(0);
+		exit(1);
 	}
 	return entropy;
-}
-
-void validateENT(int& ENT){
-	if(ENT != 128 && ENT != 160 && ENT != 192 && ENT != 224 && ENT != 256){
-		std::cerr << "Invalid ENT length.\n";
-		exit(0);
-	}
 }
 
 std::string generateMnemonic(int& ENT, std::vector<unsigned char>& entropy, std::vector<unsigned char>& hash){

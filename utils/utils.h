@@ -1,0 +1,30 @@
+#ifndef UTILS_H
+#define UTILS_H
+
+#include <iostream>
+#include <vector>
+#include "../config/coin_config.h"
+
+////////////////////////////////////////////////////////
+//			User Input Handling
+////////////////////////////////////////////////////////
+int getEntropySizeFromUserChoice();
+
+CoinType getCoinTypeFromUserChoice();
+
+////////////////////////////////////////////////////////
+//			Output Utilities
+////////////////////////////////////////////////////////
+void printHex(const std::vector<unsigned char>& data);
+
+////////////////////////////////////////////////////////
+//			Input Validation
+////////////////////////////////////////////////////////
+inline void validateENT(int& ENT){
+	if(ENT != 128 && ENT != 160 && ENT != 192 && ENT != 224 && ENT != 256){
+		std::cerr << "Invalid ENT length.\n";
+		exit(1);
+	}
+}
+
+#endif
