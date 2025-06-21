@@ -1,9 +1,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include "../config/coin_config.h"
 #include <iostream>
 #include <vector>
-#include "../config/coin_config.h"
+#include <cstdint>
+#include <openssl/bn.h>
 
 ////////////////////////////////////////////////////////
 //			User Input Handling
@@ -11,11 +13,6 @@
 int getEntropySizeFromUserChoice();
 
 CoinType getCoinTypeFromUserChoice();
-
-////////////////////////////////////////////////////////
-//			Output Utilities
-////////////////////////////////////////////////////////
-void printHex(const std::vector<unsigned char>& data);
 
 ////////////////////////////////////////////////////////
 //			Input Validation
@@ -26,5 +23,17 @@ inline void validateENT(int& ENT){
 		exit(1);
 	}
 }
+
+////////////////////////////////////////////////////////
+//			Output Utilities
+////////////////////////////////////////////////////////
+void printHex(const std::vector<unsigned char>& data);
+
+////////////////////////////////////////////////////////
+//			Serialization functions
+////////////////////////////////////////////////////////
+std::vector<unsigned char> ser32_be(uint32_t index);
+
+std::vector<unsigned char> ser256_be(const BIGNUM* bn);
 
 #endif
