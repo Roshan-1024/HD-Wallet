@@ -11,6 +11,7 @@ int main(){
 	//				BIP-39
 	///////////////////////////////////////////////////////////////////////
 	int ENT = getEntropySizeFromUserChoice();
+	CoinType coin = getCoinTypeFromUserChoice();
 
 	std::vector<unsigned char> entropy = generateEntropy(ENT);
 	std::vector<unsigned char> hash = sha256_raw(entropy);
@@ -36,4 +37,7 @@ int main(){
 	printHex(master_private_key);
 	std::cout << "master chain code =  ";
 	printHex(master_chain_code);
+
+	std::string derivationPath = getDerivationPath(coin);
+	std::vector<uint32_t> parsedPath = parsePath(derivationPath);
 }

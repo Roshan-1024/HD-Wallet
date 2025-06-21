@@ -3,6 +3,8 @@
 
 #include <string>
 #include <stdexcept>
+#include <unordered_map>
+#include <iostream>
 
 enum class CoinType{
 	Bitcoin,
@@ -39,6 +41,33 @@ inline std::string getCoinName(CoinType coin){
 		case CoinType::Tron: return "Tron";
 		default: throw std::runtime_error("Unsupported Coin Type");
 	}
+}
+
+CoinType getCoinTypeFromUserChoice(){
+	std::unordered_map<int, CoinType> coinMap = {
+		{1, CoinType::Bitcoin},
+		{2, CoinType::Ethereum},
+		{3, CoinType::BSC},
+		{4, CoinType::Polygon},
+		{5, CoinType::Tron},
+	};
+
+	int choice;
+	std::cout << "Choose the Coin type:\n";
+	std::cout << "1. Bitcoin\n";
+	std::cout << "2. Ethereum\n";
+	std::cout << "3. BSC\n";
+	std::cout << "4. Polygon\n";
+	std::cout << "5. Tron\n";
+	std::cout << "Choice: ";
+	std::cin >> choice;
+
+	while (coinMap.count(choice) != 1) {
+		std::cout << "Invalid choice. Try again: ";
+		std::cin >> choice;
+	}
+
+	return coinMap[choice];
 }
 
 #endif
