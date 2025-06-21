@@ -4,15 +4,14 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdint>
+#include <unordered_map>
 
 int main(){
 	///////////////////////////////////////////////////////////////////////
 	//				BIP-39
 	///////////////////////////////////////////////////////////////////////
-	int ENT;
-	std::cout << "Specify ENT length in bits (128, 160, 192, 224, 256): ";
-	std::cin >> ENT;
-	validateENT(ENT);
+	int ENT = getEntropySizeFromUserChoice();
+	validateENT(ENT); // Redundant (currently)
 
 	std::vector<unsigned char> entropy = generateEntropy(ENT);
 	std::vector<unsigned char> hash = sha256_raw(entropy);

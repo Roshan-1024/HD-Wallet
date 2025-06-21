@@ -8,8 +8,39 @@
 #include <vector>
 #include <bitset>
 #include <cstdlib>
+#include <unordered_map>
 
 #define FILE_NAME "wordlists/english.txt"
+
+int getEntropySizeFromUserChoice(){
+	std::unordered_map<int, int> MS_Map = {
+		{1, 12},
+		{2, 15},
+		{3, 18},
+		{4, 21},
+		{5, 24},
+	};
+
+	int choice;
+	std::cout << "Choose the number of words for your Mnemonics:\n";
+	std::cout << "1. 12 Words\n";
+	std::cout << "2. 15 Words\n";
+	std::cout << "3. 18 Words\n";
+	std::cout << "4. 21 Words\n";
+	std::cout << "5. 24 Words\n";
+	std::cout << "Choice: ";
+	std::cin >> choice;
+
+	while (MS_Map.count(choice) != 1) {
+		std::cout << "Invalid choice. Try again: ";
+		std::cin >> choice;
+	}
+
+	int MS = MS_Map[choice];
+	int ENT = (32 * MS) / 3; // ENT in bits
+	validateENT(ENT); // Redundant (currently)
+	return ENT;
+}
 
 std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase){
 	std::string salt = "mnemonic" + passphrase;
