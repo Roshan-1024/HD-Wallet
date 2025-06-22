@@ -44,6 +44,28 @@ std::vector<uint32_t> parsePath(const std::string path){
 	return parsedPath;
 }
 
+std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key){
+	EC_GROUP* group = EC_GROUP_new_by_curve_name(NID_secp256k1);
+	BN_CTX* ctx = BN_CTX_new();
+	BIGNUM* private_key_bn = BN_new();
+	BN_bin2bn(private_key.data(), private_key.size(), private_key_bn);
+
+	// parent public key = parent_private_key_bn * G
+	EC_POINT* public_key_point = EC_POINT_new(group);
+	EC_POINT_mul(group, public_key_point, private_key_bn, nullptr, nullptr, ctx);
+
+	// Serialize the point using compressed format
+	std::vector<unsigned char> public_key(33);
+	EC_POINT_point2oct(group, public_key_point, POINT_CONVERSION_COMPRESSED, public_key.data(), public_key.size(), ctx);
+
+	BN_free(private_key_bn);
+	EC_GROUP_free(group);
+	BN_CTX_free(ctx);
+	EC_POINT_free(public_key_point);
+
+	return public_key;
+}
+
 std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	const std::vector<unsigned char>& parent_private_key,
 	const std::vector<unsigned char>& parent_chain_code,
@@ -61,36 +83,20 @@ std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 		data = {0x00};
 
 		// Serialize the 256 bit (32 bytes) parent_private_key in big-endian byte order
-		if (parent_private_key.size() != 32)	// Assert that it's already serialized
+		if(parent_private_key.size() != 32)	// Assert that it's already serialized
 			throw std::invalid_argument("Parent private key must be 32 bytes");
 		const auto& serialized_be_parent_private_key = parent_private_key;
 
 		data.insert(data.end(), serialized_be_parent_private_key.begin(), serialized_be_parent_private_key.end());
 	}
 	else{ // Non-hardened
-		// Convert parent private key to BIGNUM
-		BIGNUM* parent_private_key_bn = BN_new();
-		BN_bin2bn(parent_private_key.data(), parent_private_key.size(), parent_private_key_bn);
-
-		// parent public key = parent_private_key_bn * G
-		EC_POINT* parent_public_key_point = EC_POINT_new(group);
-		EC_POINT_mul(group, parent_public_key_point, parent_private_key_bn, nullptr, nullptr, ctx);
-
-		// Serialize the point using compressed format
-		std::vector<unsigned char> parent_public_key(33);
-		EC_POINT_point2oct(group, parent_public_key_point, POINT_CONVERSION_COMPRESSED, parent_public_key.data(), parent_public_key.size(), ctx);
-
 		// data = ser_p(point(parent_private_key)) + ser_32(index)
-		data = parent_public_key;
-
-		BN_free(parent_private_key_bn);
-		EC_POINT_free(parent_public_key_point);
+		data = getPublicKeyFromPrivateKey(parent_private_key);
 	}
-
 	data.insert(data.end(), serialized_be_index.begin(), serialized_be_index.end());
 
+	// Split I into two 32-byte sequences, IL and IR.
 	std::vector<unsigned char> I = hmac_sha512(parent_chain_code, data);
-
 	std::vector<unsigned char> IL(I.begin(), I.begin()+32);
 	std::vector<unsigned char> IR(I.begin()+32, I.end());
 
