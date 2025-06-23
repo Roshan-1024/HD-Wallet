@@ -44,7 +44,7 @@ std::vector<uint32_t> parsePath(const std::string path){
 	return parsedPath;
 }
 
-std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key){
+std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, CoinType coin){
 	EC_GROUP* group = EC_GROUP_new_by_curve_name(NID_secp256k1);
 	BN_CTX* ctx = BN_CTX_new();
 	BIGNUM* private_key_bn = BN_new();
@@ -54,9 +54,18 @@ std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned
 	EC_POINT* public_key_point = EC_POINT_new(group);
 	EC_POINT_mul(group, public_key_point, private_key_bn, nullptr, nullptr, ctx);
 
-	// Serialize the point using compressed format
-	std::vector<unsigned char> public_key(33);
-	EC_POINT_point2oct(group, public_key_point, POINT_CONVERSION_COMPRESSED, public_key.data(), public_key.size(), ctx);
+	bool toCompress = requiresCompressedPublicKey(coin);
+	size_t bytes = toCompress? 33 : 65;
+	std::vector<unsigned char> public_key(bytes);
+
+	EC_POINT_point2oct(
+		group,
+		public_key_point,
+		toCompress ? POINT_CONVERSION_COMPRESSED : POINT_CONVERSION_UNCOMPRESSED,
+		public_key.data(),
+		public_key.size(),
+		ctx
+	);
 
 	BN_free(private_key_bn);
 	EC_GROUP_free(group);
@@ -69,7 +78,8 @@ std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned
 std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	const std::vector<unsigned char>& parent_private_key,
 	const std::vector<unsigned char>& parent_chain_code,
-	uint32_t index){
+	uint32_t index,
+	CoinType coin){
 
 	std::vector<unsigned char> data;
 
@@ -91,7 +101,7 @@ std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	}
 	else{ // Non-hardened
 		// data = ser_p(point(parent_private_key)) + ser_32(index)
-		data = getPublicKeyFromPrivateKey(parent_private_key);
+		data = getPublicKeyFromPrivateKey(parent_private_key, coin);
 	}
 	data.insert(data.end(), serialized_be_index.begin(), serialized_be_index.end());
 

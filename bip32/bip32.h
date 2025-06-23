@@ -1,12 +1,13 @@
 #ifndef BIP32_H
 #define BIP32_H
 
+#include "../utils/utils.h"
 #include <vector>
 #include <string>
 #include <cstdint>
 
 //////////////////////////////////////////////////////////////////////////////////
-//				HMAC-SHA512 Utility
+//				Hashing Functions
 //////////////////////////////////////////////////////////////////////////////////
 std::vector<unsigned char> hmac_sha512(const std::vector<unsigned char>& key, const std::vector<unsigned char>& message);
 
@@ -21,11 +22,12 @@ std::vector<uint32_t> parsePath(std::string path);
 std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	const std::vector<unsigned char>& parent_private_key,
 	const std::vector<unsigned char>& parent_chain_code,
-	uint32_t index);
+	uint32_t index,
+	CoinType coin);
 
 //////////////////////////////////////////////////////////////////////////////////
 //				Generate Public Key
 //////////////////////////////////////////////////////////////////////////////////
-std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key);
+std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, CoinType coin);
 
 #endif

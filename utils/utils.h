@@ -36,4 +36,17 @@ std::vector<unsigned char> ser32_be(uint32_t index);
 
 std::vector<unsigned char> ser256_be(const BIGNUM* bn);
 
+////////////////////////////////////////////////////////
+//			Coin-type utilities
+////////////////////////////////////////////////////////
+inline bool requiresCompressedPublicKey(CoinType coin){
+	switch(coin){
+		case CoinType::Bitcoin: return true;
+		case CoinType::Ethereum: return false;
+		case CoinType::BSC: return false;
+		case CoinType::Polygon: return false;
+		case CoinType::Tron: return false;
+		default: throw std::runtime_error("Unsupported Coin Type");
+	}
+}
 #endif
