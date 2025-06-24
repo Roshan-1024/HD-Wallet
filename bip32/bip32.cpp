@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "../address/address_generator.h"
 #include "bip32.h"
 #include <openssl/hmac.h>
 #include <openssl/bn.h>
@@ -142,4 +143,18 @@ std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	BN_CTX_free(ctx);
 
 	return {serialized_be_child_private_key, child_chain_code};
+}
+
+std::vector<unsigned char> getAddress(const std::vector<unsigned char>& final_public_key, CoinType coin){
+	switch(coin){
+		case CoinType::Bitcoin:
+			return generateBitcoinStyleAddress(final_public_key);
+		case CoinType::Ethereum:
+		case CoinType::BSC:
+		case CoinType::Polygon:
+			return generateEVMStyleAddress(final_public_key);
+		case CoinType::Tron:
+			return generateTronStyleAddress(final_public_key);
+		default: throw std::runtime_error("Unsupported Coin Type");
+	}
 }

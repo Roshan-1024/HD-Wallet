@@ -49,11 +49,14 @@ int main(){
 	}
 
 	std::vector<unsigned char> final_public_key = getPublicKeyFromPrivateKey(final_private_key, coin);
+	std::vector<unsigned char> address = getAddress(final_public_key, coin);
 
+	std::cout << "Final chain code   = ";
+	printHex(final_chain_code);
 	std::cout << "Final Public Key   = ";
 	printHex(final_public_key);
 	std::cout << "Final Private Key  = ";
 	printHex(final_private_key);
-	std::cout << "Final chain code   = ";
-	printHex(final_chain_code);
+	std::cout << "Address = ";
+	printHex(address);
 }
