@@ -42,5 +42,5 @@ make
 ```
 ## Example Output
 <h1 align="center">
-<img src="doc/_static/example_output.png" alt="HD Wallet CLI Output">>
+<img src="doc/_static/example_output.png" alt="HD Wallet CLI Output">
 </h1>  
