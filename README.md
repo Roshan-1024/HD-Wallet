@@ -44,3 +44,7 @@ make
 <h1 align="center">
 <img src="doc/_static/example_output.png" alt="HD Wallet CLI Output">
 </h1>  
+
+## Standards Used
+* [BIP-39: Mnemonic code for generating deterministic keys](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki)  
+* [BIP-32: Hierarchical Deterministic Wallets](https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki)  
