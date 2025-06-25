@@ -28,7 +28,7 @@ std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 //////////////////////////////////////////////////////////////////////////////////
 //				Generate Public Key
 //////////////////////////////////////////////////////////////////////////////////
-std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, CoinType coin);
+std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, bool toCompress);
 
 //////////////////////////////////////////////////////////////////////////////////
 //				Generate Public Key

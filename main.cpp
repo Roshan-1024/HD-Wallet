@@ -48,7 +48,7 @@ int main(){
 		final_chain_code = std::move(chain_code);
 	}
 
-	std::vector<unsigned char> final_public_key = getPublicKeyFromPrivateKey(final_private_key, coin);
+	std::vector<unsigned char> final_public_key = getPublicKeyFromPrivateKey(final_private_key, requiresCompressedPublicKey(coin));
 	std::vector<unsigned char> address = getAddress(final_public_key, coin);
 
 	std::cout << "Final chain code   = ";
