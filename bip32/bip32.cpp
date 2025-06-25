@@ -45,7 +45,7 @@ std::vector<uint32_t> parsePath(const std::string path){
 	return parsedPath;
 }
 
-std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, CoinType coin){
+std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned char>& private_key, bool toCompress){
 	EC_GROUP* group = EC_GROUP_new_by_curve_name(NID_secp256k1);
 	BN_CTX* ctx = BN_CTX_new();
 	BIGNUM* private_key_bn = BN_new();
@@ -55,7 +55,6 @@ std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned
 	EC_POINT* public_key_point = EC_POINT_new(group);
 	EC_POINT_mul(group, public_key_point, private_key_bn, nullptr, nullptr, ctx);
 
-	bool toCompress = requiresCompressedPublicKey(coin);
 	size_t bytes = toCompress? 33 : 65;
 	std::vector<unsigned char> public_key(bytes);
 
@@ -102,7 +101,9 @@ std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	}
 	else{ // Non-hardened
 		// data = ser_p(point(parent_private_key)) + ser_32(index)
-		data = getPublicKeyFromPrivateKey(parent_private_key, coin);
+
+		// Does ser_p(point(parent_private_key))
+		data = getPublicKeyFromPrivateKey(parent_private_key, /*toCompress=*/true);
 	}
 	data.insert(data.end(), serialized_be_index.begin(), serialized_be_index.end());
 
