@@ -43,6 +43,21 @@ cmake --build .
 ./build/bin/wallet
 ```
 
+## Docker (Alternative Setup)
+You can also use Docker to build and run the project without installing dependencies manually.
+
+### Build and run the production image:
+```bash
+docker build --target prod -t hdwallet-prod .
+docker run --rm -it hdwallet-prod
+```
+
+### (Optional) Build and run the development environment:
+```bash
+docker build --target dev -t hdwallet-dev .
+docker run --rm -it hdwallet-dev
+```
+
 ## Example Output
 <h1 align="center">
 <img src="doc/_static/example_output.png" alt="HD Wallet CLI Output">
