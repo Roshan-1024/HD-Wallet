@@ -49,4 +49,9 @@ inline bool requiresCompressedPublicKey(CoinType coin){
 		default: throw std::runtime_error("Unsupported Coin Type");
 	}
 }
+
+////////////////////////////////////////////////////////
+//			Decoding
+////////////////////////////////////////////////////////
+std::vector<unsigned char> base58CheckDecode(const std::string& input);
 #endif

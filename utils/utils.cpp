@@ -7,6 +7,9 @@
 #include <unordered_map>
 #include <openssl/bn.h>
 #include <vector>
+#include <openssl/sha.h>
+
+const std::string BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
 int getEntropySizeFromUserChoice(){
 	std::unordered_map<int, int> MS_Map = {
@@ -69,7 +72,7 @@ CoinType getCoinTypeFromUserChoice(){
 }
 
 void printHex(const std::vector<unsigned char>& data) {
-    for (unsigned char c : data)
+    for(unsigned char c : data)
         std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)c;
     std::cout << std::dec << std::endl;
 }
@@ -93,4 +96,46 @@ std::vector<unsigned char> ser256_be(const BIGNUM* bn){
 	}
 
 	return out;
+}
+
+std::vector<unsigned char> base58CheckDecode(const std::string& input){
+    std::vector<unsigned char> num(1, 0);
+    for(char ch : input){
+        auto digit = BASE58_ALPHABET.find(ch);
+        if(digit == std::string::npos){
+            throw std::runtime_error("Invalid base58 character");
+        }
+
+        int carry = digit;
+        for(auto it = num.rbegin(); it != num.rend(); ++it){
+            carry += (*it) * 58;
+            *it = carry & 0xFF;
+            carry >>= 8;
+        }
+        while(carry){
+            num.insert(num.begin(), carry & 0xFF);
+            carry >>= 8;
+        }
+    }
+
+    int leading_zeros = 0;
+    for(char ch : input){
+        if(ch == '1') leading_zeros++;
+        else break;
+    }
+
+    std::vector<unsigned char> result(leading_zeros, 0);
+    result.insert(result.end(), num.begin(), num.end());
+
+    std::vector<unsigned char> data(result.begin(), result.end() - 4);
+    unsigned char hash1[SHA256_DIGEST_LENGTH];
+    SHA256(data.data(), data.size(), hash1);
+    unsigned char hash2[SHA256_DIGEST_LENGTH];
+    SHA256(hash1, SHA256_DIGEST_LENGTH, hash2);
+
+    if(!std::equal(hash2, hash2 + 4, result.end() - 4)){
+        throw std::runtime_error("Invalid Base58Check checksum");
+    }
+
+    return data;  // data without 4-byte checksum
 }
