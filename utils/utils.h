@@ -25,9 +25,11 @@ inline void validateENT(int& ENT){
 }
 
 ////////////////////////////////////////////////////////
-//			Output Utilities
+//			Hex Utilities
 ////////////////////////////////////////////////////////
 void printHex(const std::vector<unsigned char>& data);
+
+std::vector<unsigned char> hexToBytes(const std::string& hex_str);
 
 ////////////////////////////////////////////////////////
 //			Serialization functions
@@ -49,4 +51,9 @@ inline bool requiresCompressedPublicKey(CoinType coin){
 		default: throw std::runtime_error("Unsupported Coin Type");
 	}
 }
+
+////////////////////////////////////////////////////////
+//			Decoding
+////////////////////////////////////////////////////////
+std::vector<unsigned char> base58CheckDecode(const std::string& input);
 #endif
