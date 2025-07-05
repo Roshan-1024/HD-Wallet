@@ -22,8 +22,7 @@ std::vector<uint32_t> parsePath(std::string path);
 std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	const std::vector<unsigned char>& parent_private_key,
 	const std::vector<unsigned char>& parent_chain_code,
-	uint32_t index,
-	CoinType coin);
+	uint32_t index);
 
 //////////////////////////////////////////////////////////////////////////////////
 //				Generate Public Key
