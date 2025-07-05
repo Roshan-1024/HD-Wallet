@@ -57,6 +57,7 @@ set(TEST_SOURCES
     tests/bip32_tests.cpp
     bip32/bip32.cpp
     utils/utils.cpp
+    utils/test_utils.cpp
     address/address_generator.cpp
     keccak/keccak.cpp
 )
