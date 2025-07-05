@@ -9,25 +9,14 @@
 using json = nlohmann::json;
 
 
-std::vector<unsigned char> hexToBytes(const std::string& hex_str){
-	std::vector<unsigned char> bytes;
-	for(size_t i = 0; i < hex_str.length(); i += 2){
-		std::string str = hex_str.substr(i, 2);
-		unsigned char byte = static_cast<unsigned char>(std::stoul(str, nullptr, 16));
-		bytes.push_back(byte);
-	}
-	return bytes;
-}
-
 class BIP39Test : public testing::Test{
 protected:
 	static json j;
 	static void SetUpTestSuite(){
-		std::ifstream file(TEST_VECTORS_PATH);
-		std::cout << "was opening this file: " << TEST_VECTORS_PATH << std::endl;
+		std::ifstream file(BIP39_TEST_VECTORS_PATH);
 		if(!file){
 			std::cerr << "Error opening BIP39_vectors.json file\n";
-			std::cout << "TEST_VECTORS_PATH = " << TEST_VECTORS_PATH << std::endl;
+			std::cout << "TEST_VECTORS_PATH = " << BIP39_TEST_VECTORS_PATH << std::endl;
 			exit(1);
 		}
 		file >> j;

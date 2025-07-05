@@ -11,6 +11,16 @@
 
 const std::string BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
+std::vector<unsigned char> hexToBytes(const std::string& hex_str){
+	std::vector<unsigned char> bytes;
+	for(size_t i = 0; i < hex_str.length(); i += 2){
+		std::string str = hex_str.substr(i, 2);
+		unsigned char byte = static_cast<unsigned char>(std::stoul(str, nullptr, 16));
+		bytes.push_back(byte);
+	}
+	return bytes;
+}
+
 int getEntropySizeFromUserChoice(){
 	std::unordered_map<int, int> MS_Map = {
 		{1, 12},

@@ -72,7 +72,7 @@ int toInt(const std::string& bits){
 std::vector<unsigned char> generateEntropy(int ENT){
 	int byte_len = ENT/8;
 	std::vector<unsigned char> entropy(byte_len);
-	if(!RAND_bytes(entropy.data(), byte_len)) {
+	if(!RAND_bytes(entropy.data(), byte_len)){
 		std::cerr << "Error generating secure random bytes in generateEntropy().\n";
 		exit(1);
 	}
