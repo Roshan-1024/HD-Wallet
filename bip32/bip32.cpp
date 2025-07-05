@@ -78,8 +78,7 @@ std::vector<unsigned char> getPublicKeyFromPrivateKey(const std::vector<unsigned
 std::pair<std::vector<unsigned char>, std::vector<unsigned char>> CKD_priv(
 	const std::vector<unsigned char>& parent_private_key,
 	const std::vector<unsigned char>& parent_chain_code,
-	uint32_t index,
-	CoinType coin){
+	uint32_t index){
 
 	std::vector<unsigned char> data;
 

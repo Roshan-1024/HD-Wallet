@@ -43,7 +43,7 @@ int main(){
 	std::vector<unsigned char> final_private_key = master_private_key;
 	std::vector<unsigned char> final_chain_code = master_chain_code;
 	for(uint32_t index : parsedPath){
-		auto [private_key, chain_code] = CKD_priv(final_private_key, final_chain_code, index, coin);
+		auto [private_key, chain_code] = CKD_priv(final_private_key, final_chain_code, index);
 		final_private_key = std::move(private_key);
 		final_chain_code = std::move(chain_code);
 	}
