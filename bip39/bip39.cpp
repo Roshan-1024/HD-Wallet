@@ -9,7 +9,6 @@
 #include <bitset>
 #include <cstdlib>
 
-#define FILE_NAME "wordlists/english.txt"
 
 std::vector<unsigned char> generateSeed(const std::string& mnemonic, const std::string& passphrase){
 	std::string salt = "mnemonic" + passphrase;
@@ -48,9 +47,9 @@ std::vector<unsigned char> sha256_raw(const std::vector<unsigned char>& data) {
 }
 
 std::string getLine(int n){
-	std::ifstream file(FILE_NAME);
+	std::ifstream file(EN_WORDLISTS_PATH);
 	if(!file){
-		std::cerr << "Error: Failed to open wordlist file '" << FILE_NAME << "'.\n";
+		std::cerr << "Error: Failed to open wordlist file '" << EN_WORDLISTS_PATH << "'.\n";
 		exit(1);
 	}
 
@@ -73,8 +72,8 @@ int toInt(const std::string& bits){
 std::vector<unsigned char> generateEntropy(int ENT){
 	int byte_len = ENT/8;
 	std::vector<unsigned char> entropy(byte_len);
-	if (!RAND_bytes(entropy.data(), byte_len)) {
-		std::cerr << "Error generating secure random bytes.\n";
+	if(!RAND_bytes(entropy.data(), byte_len)){
+		std::cerr << "Error generating secure random bytes in generateEntropy().\n";
 		exit(1);
 	}
 	return entropy;
@@ -88,7 +87,7 @@ std::string generateMnemonic(int& ENT, std::vector<unsigned char>& entropy, std:
 	std::string checkSum = hashBits.substr(0, CS);
 
 	std::string entropyBits;
-	for (auto byte : entropy)
+	for(auto byte : entropy)
 	    entropyBits += std::bitset<8>(byte).to_string();
 
 	std::string entropyWithCheckSum = entropyBits + checkSum;

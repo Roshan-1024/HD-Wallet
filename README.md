@@ -18,29 +18,41 @@ Easily generate secure cryptocurrency wallets with this modular, standards-compl
 * A Linux environment (or WSL on Windows)
 * A C++17-compatible compiler (e.g. `g++`)
 * OpenSSL development libraries (`libssl-dev`)
-* CMake installed (version 3.14 or higher)
+* nlohmann‑json header‑only library (`nlohmann‑json3-dev`)
+* CMake version 3.14 or higher
 
 ## Setup
-1. Clone the repository and navigate to the directory.
+1. Clone the repository and navigate into the project directory:
 ```bash
-git clone https://github.com/your-username/HD-Wallet.git
+git clone https://github.com/Roshan-1024/HD-Wallet.git
 cd HD-Wallet
 ```
-2. Install dependencies (on Debian/Ubuntu/WSL).
+2. Install dependencies (for Debian/Ubuntu/WSL):
 ```bash
 sudo apt update
-sudo apt install build-essential cmake libssl-dev
+sudo apt install build-essential cmake libssl-dev nlohmann-json3-dev
 ```
-3. Build the project.
+3. Build the project:
 ```bash
 mkdir build
 cd build
 cmake ..
 cmake --build .
 ```
-4. Run the wallet from the project root.
+4. Run the executable:
 ```bash
-./build/bin/wallet
+./bin/wallet
+```
+
+## Running Unit Tests
+To run the tests:
+```bash
+cd build
+ctest
+```
+Or, run the test executable directly:
+```bash
+./bin/unit_tests
 ```
 
 ## Example Output
